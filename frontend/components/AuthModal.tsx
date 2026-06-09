@@ -37,7 +37,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const onSubmit = async (data: UserCredentials) => {
     setIsLoading(true);
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://onewave-trade.onrender.com';
       const response = await fetch(`${API_URL}/api/auth/${isLogin ? 'login' : 'register'}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
