@@ -60,7 +60,7 @@ No mid code. No ugly dashboards. Just a clean, fast, fintech-grade build you can
 git clone https://github.com/your-username/tradesim.git
 
 # Move into the project
-cd tradesim
+cd onewave-trade
 
 # Install dependencies
 npm install
@@ -139,6 +139,6 @@ MIT — do whatever you want, just don't blame me if your sim portfolio also rek
 
 Built with Boyss [Kaifyyy](https://github.com/iamkaifyyy)
 
- **Star it if you fw it. Fork it if you're about it.**
+ **Star it if you fw it. Fork it if you're about it. Oii, Boyss Daddy's Home**
 
 </div>
