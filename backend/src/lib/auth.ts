@@ -1,22 +1,24 @@
 import { z } from 'zod';
-import jwt from "jsonwebtoken"
-import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret"
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 export const userSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8),
-
 });
 
 export type UserCredentials = z.infer<typeof userSchema>;
 
+// Use a globalThis singleton so the in-memory store survives hot reloads in dev.
+declare global {
+  // eslint-disable-next-line no-var
+  var __users: Map<string, { email: string; password: string; id: string }> | undefined;
+}
 
-const users = new Map<
-  string,
-  { email: string; password: string; id: string }
->();
+const users: Map<string, { email: string; password: string; id: string }> =
+  globalThis.__users ?? (globalThis.__users = new Map());
 
 export async function register(credentials: UserCredentials) {
     const { email, password } = userSchema.parse(credentials);
@@ -67,8 +69,8 @@ export async function login(credentials: UserCredentials){
     JWT_SECRET,
     {
         expiresIn: '24h'
-    },
-);
+    });
+
     return {
         token,
         user:{
@@ -78,9 +80,7 @@ export async function login(credentials: UserCredentials){
             portfolio: {},
         },
     }
-
 }
-
 
 export function verifyToken(token: string) {
   try {

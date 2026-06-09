@@ -9,7 +9,7 @@ export default function Home() {
     <main className="min-h-screen bg-background">
       <ConnectionStatus />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8">TradeSim Trading Platform</h1>
+        <h1 className="text-4xl font-bold mb-8">onewave-trade Platform</h1>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <Suspense fallback={<div>Loading market data...</div>}>
