@@ -37,10 +37,11 @@ export async function register(credentials: UserCredentials) {
     const token = jwt.sign({ email, id}, JWT_SECRET, { expiresIn: '24h'});
 
     return {
-        token, 
-        user: { id,
+        token,
+        user: {
+            id,
             email,
-            balance: "100,000",
+            balance: 100000,
             portfolio: {},
         },
     };
@@ -73,12 +74,13 @@ export async function login(credentials: UserCredentials){
         user:{
             id: user.id,
             email,
-            balance: "100,000",
+            balance: 100000,
             portfolio: {},
         },
     }
 
 }
+
 
 export function verifyToken(token: string) {
   try {
