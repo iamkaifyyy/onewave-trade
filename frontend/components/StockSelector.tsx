@@ -3,20 +3,11 @@
 import { Stock } from '@/lib/types';
 import { useCallback, useState } from 'react';
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-} from '@/components/ui/command';
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 
 interface StockSelectorProps {
   stocks: Stock[];
@@ -57,67 +48,56 @@ export function StockSelector({
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 border-dashed"
+          <button
+            className="flex items-center space-x-1.5 px-4 py-1.5 border border-dashed border-border hover:border-foreground/45 transition-colors rounded-full text-xs font-mono-label bg-background"
             role="combobox"
             aria-expanded={open}
           >
-            <ChevronsUpDown className="h-4 w-4 opacity-50" />
-            <span className="ml-2">
-              {selectedStocks.length === 0
-                ? 'Select stocks'
-                : `${selectedStocks.length} selected`}
-            </span>
-          </Button>
+            <span>SELECT TICKERS</span>
+            <ChevronsUpDown className="h-3 w-3 opacity-60" />
+          </button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0" align="start">
-          <div className="overflow-hidden rounded-md border border-input bg-popover text-popover-foreground">
-            <div
-              className="flex cursor-pointer items-center justify-between px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+        <PopoverContent className="w-[180px] p-1 bg-background border border-border shadow-xl rounded-md" align="start">
+          <div className="flex flex-col space-y-0.5">
+            <button
+              className="flex items-center justify-between px-2.5 py-1.5 text-xs rounded hover:bg-secondary text-left transition-colors font-mono-label"
               onClick={handleSelectAll}
-              role="button"
-              tabIndex={0}
             >
-              <span>All Stocks</span>
+              <span>ALL SYMBOLS</span>
               {selectedStocks.length === stocks.length && (
-                <Check className="h-4 w-4" />
+                <Check className="h-3.5 w-3.5" />
               )}
-            </div>
+            </button>
             {stocks.map((stock) => (
-              <div
+              <button
                 key={stock.symbol}
-                className="flex cursor-pointer items-center justify-between px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                className="flex items-center justify-between px-2.5 py-1.5 text-xs rounded hover:bg-secondary text-left transition-colors font-medium"
                 onClick={() => handleSelectStock(stock.symbol)}
-                role="button"
-                tabIndex={0}
               >
                 <span>{stock.symbol}</span>
                 {selectedStocks.includes(stock.symbol) && (
-                  <Check className="h-4 w-4" />
+                  <Check className="h-3.5 w-3.5 text-accent" />
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </PopoverContent>
       </Popover>
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1.5">
         {selectedStocks.map((symbol) => (
-          <Badge
+          <span
             key={symbol}
-            variant="secondary"
-            className="flex items-center gap-1"
+            className="inline-flex items-center gap-1 px-3 py-1 bg-secondary border border-border hover:border-foreground/30 transition-colors text-xs font-medium rounded-full"
           >
             {symbol}
             <X
-              className="h-3 w-3 cursor-pointer hover:text-destructive"
+              className="h-3 w-3 cursor-pointer opacity-50 hover:opacity-100 hover:text-destructive"
               onClick={(e) => handleRemoveStock(symbol, e)}
             />
-          </Badge>
+          </span>
         ))}
       </div>
     </div>

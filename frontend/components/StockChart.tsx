@@ -29,7 +29,6 @@ export function StockChart() {
   }, [stocks]);
 
   useEffect(() => {
-    // Only update if we have selected stocks
     if (selectedStocks.length === 0) return;
 
     const selectedStockData = stocks.filter((s) =>
@@ -38,32 +37,34 @@ export function StockChart() {
 
     setPriceHistory((prev) => {
       const newPoint: PriceData = {
-        time: new Date().toLocaleTimeString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       };
 
       selectedStockData.forEach((stock) => {
         newPoint[stock.symbol] = stock.price;
       });
 
-      const updatedHistory = [...prev, newPoint].slice(-20);
-      return updatedHistory;
+      return [...prev, newPoint].slice(-25);
     });
   }, [stocks, selectedStocks]);
 
   return (
-    <Card>
-      <CardHeader className="space-y-3 pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-normal">Price Chart</CardTitle>
+    <Card className="rounded-[22px] border border-border shadow-sm overflow-hidden bg-card/40 backdrop-blur-sm">
+      <CardHeader className="space-y-4 p-6 border-b border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <CardTitle className="text-lg font-display font-medium">Interactive Price Analysis</CardTitle>
+            <p className="text-xs text-muted-foreground mt-0.5 font-mono-label">Compare live indicators</p>
+          </div>
           <ChartTypeSelector activeType={chartType} onChange={setChartType} />
         </div>
-        <div className="flex justify-between flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
           <StockSelector
             stocks={stocks}
             selectedStocks={selectedStocks}
             onSelect={setSelectedStocks}
           />
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5">
             <Switch
               checked={showPercentages}
               onCheckedChange={setShowPercentages}
@@ -71,22 +72,26 @@ export function StockChart() {
             />
             <label
               htmlFor="percentage-mode"
-              className="text-sm text-muted-foreground whitespace-nowrap"
+              className="text-xs font-mono-label text-muted-foreground whitespace-nowrap cursor-pointer"
             >
-              Show percentages
+              Percentage Mode
             </label>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[400px]">
-          {selectedStocks.length > 0 && (
+      <CardContent className="p-6">
+        <div className="h-[360px] w-full">
+          {selectedStocks.length > 0 ? (
             <ChartContent
               data={priceHistory}
               type={chartType}
               dataKeys={selectedStocks}
               showPercentages={showPercentages}
             />
+          ) : (
+            <div className="flex h-full items-center justify-center text-xs font-mono-label text-muted-foreground">
+              Select tickers to display chart
+            </div>
           )}
         </div>
       </CardContent>

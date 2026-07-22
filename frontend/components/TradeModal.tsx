@@ -8,11 +8,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface TradeModalProps {
   stock: Stock;
@@ -29,6 +28,15 @@ export function TradeModal({ stock, type, onClose }: TradeModalProps) {
     if (!user) return;
 
     const qty = parseInt(quantity);
+    if (isNaN(qty) || qty <= 0) {
+      toast({
+        title: 'Invalid quantity',
+        description: 'Please enter a positive integer quantity.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const total = qty * stock.price;
 
     if (type === 'buy') {
@@ -101,37 +109,64 @@ export function TradeModal({ stock, type, onClose }: TradeModalProps) {
     onClose();
   };
 
+  const parsedQty = parseInt(quantity) || 0;
+  const isBuy = type === 'buy';
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {type === 'buy' ? 'Buy' : 'Sell'} {stock.symbol}
-          </DialogTitle>
+      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden border border-border bg-background rounded-[22px] shadow-2xl">
+        <DialogHeader className="p-6 border-b border-border bg-secondary/10 flex flex-row items-center space-x-3 space-y-0">
+          <div className={`p-2 rounded-xl border ${isBuy ? 'bg-accent/15 border-accent/20 text-accent' : 'bg-muted border-border text-muted-foreground'}`}>
+            {isBuy ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
+          </div>
+          <div>
+            <DialogTitle className="text-base font-display font-medium">
+              {isBuy ? 'Buy Order' : 'Sell Order'} — {stock.symbol}
+            </DialogTitle>
+            <p className="text-[10px] font-mono-label text-muted-foreground mt-0.5">
+              Live price: ${stock.price.toFixed(2)}
+            </p>
+          </div>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <label htmlFor="quantity">Quantity</label>
+        <div className="p-6 space-y-5">
+          <div className="space-y-2">
+            <label htmlFor="quantity" className="text-xs font-mono-label text-muted-foreground">
+              Quantity
+            </label>
             <Input
               id="quantity"
               type="number"
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
+              className="h-11 bg-muted/30 border-border/80 focus:border-accent focus:ring-accent/10 transition-colors"
             />
           </div>
-          <div className="text-sm">
-            Total: ${(parseInt(quantity) * stock.price).toFixed(2)}
+          <div className="flex justify-between items-center py-3 border-t border-b border-dashed border-border/80 text-xs font-mono-label">
+            <span className="text-muted-foreground">Estimated Cost:</span>
+            <span className={`text-sm font-semibold ${isBuy ? 'text-accent' : 'text-foreground'}`}>
+              ${(parsedQty * stock.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleTrade}>
-            {type === 'buy' ? 'Buy' : 'Sell'}
-          </Button>
-        </DialogFooter>
+        <div className="flex items-center justify-end space-x-3 p-6 border-t border-border bg-secondary/5">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 border border-border hover:bg-secondary transition-colors text-xs font-medium rounded-full"
+          >
+            Cancel Order
+          </button>
+          <button
+            onClick={handleTrade}
+            className={`px-5 py-2 text-xs font-medium rounded-full text-white shadow-lg transition-all ${
+              isBuy 
+                ? 'bg-accent hover:bg-accent/90 shadow-accent/20' 
+                : 'bg-primary hover:opacity-90 shadow-primary/20'
+            }`}
+          >
+            Confirm {isBuy ? 'Buy' : 'Sell'}
+          </button>
+        </div>
       </DialogContent>
     </Dialog>
   );
